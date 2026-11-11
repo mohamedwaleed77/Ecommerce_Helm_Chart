@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-ingress
+  namespace: {{ .Values.frontend.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - path: /3001(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: cart
+            port:
+              number: 80
+      - path: /3002(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: order
+            port:
+              number: 80
+      - path: /3003(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: product
+            port:
+              number: 80
+      - path: /3004(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: user
+            port:
+              number: 80
+      - path: /()(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80

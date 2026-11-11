@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend
+  namespace: {{ .Values.backend.namespace }}
+data:
+  IP_ADDRESS: "{{ .Values.ingress.host }}"
+  DATA_BASE_HOST: "mongodb-service.{{ .Values.database.namespace }}.svc.cluster.local"
+  PORT_FRONTEND: "3005"
+  PORT_USER: "3004"
+  PORT_PRODUCT: "3003"
+  PORT_ORDER: "3002"
+  PORT_CART: "3001"
+  SESSION_TIME_MINUTES: "1440"

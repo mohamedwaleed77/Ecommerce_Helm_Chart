@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: product
+  namespace: {{ .Values.backend.namespace }}
+  labels:
+    app.kubernetes.io/name: product
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: {{ .Values.backend.product.port }}
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: product

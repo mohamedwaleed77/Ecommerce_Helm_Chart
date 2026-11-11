@@ -1,0 +1,31 @@
+replicaCount: 1
+
+image:
+  pullPolicy: IfNotPresent
+
+backend:
+  namespace: backend-ns
+  cart:
+    image: monova21/cart:latest
+    port: 3001
+  product:
+    image: monova21/product:latest
+    port: 3003
+    mountpath: /usr/src/app/uploads
+  order:
+    image: monova21/order:latest
+    port: 3002
+  user:
+    image: monova21/user:latest
+    port: 3004
+frontend:
+  namespace: frontend-ns
+  image: monova21/frontend:latest
+  port: 3005
+
+database:
+  namespace: database-ns
+
+ingress:
+  className: nginx
+  host: ecommerce.local

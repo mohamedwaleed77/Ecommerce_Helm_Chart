@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: {{ .Values.backend.namespace }}
+  labels:
+    app.kubernetes.io/name: user
+spec:
+  replicas: 1 # Adjust as needed since Knative scaling is removed
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: user
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: user
+    spec:
+      initContainers:
+        - name: wait-for-mongodb
+          image: busybox:1.28
+          command: ['sh', '-c', 'until ping -c 1 mongodb-service.database-ns.svc.cluster.local ; do sleep 2; done']
+
+      containers:
+        - name: user
+          image: {{ .Values.backend.user.image }}
+          ports:
+            - containerPort: {{ .Values.backend.user.port }}
+          envFrom:
+            - configMapRef:
+                name: backend
+            - secretRef:
+                name: backend-secret
