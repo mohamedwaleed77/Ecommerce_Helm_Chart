@@ -28,4 +28,4 @@ database:
 
 ingress:
   className: nginx
-  host: ecommerce.local
+  host: 7otElLoadbalancerDomain.hina
