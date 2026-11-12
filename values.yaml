@@ -25,6 +25,7 @@ frontend:
 
 database:
   namespace: database-ns
+  efsId: fs-example
 
 ingress:
   className: nginx
