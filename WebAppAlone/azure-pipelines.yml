@@ -1,0 +1,66 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+  tag: 'latest'
+
+stages:
+- stage: Build
+  displayName: 'Build and Push Images'
+  jobs:
+  - job: Build
+    displayName: 'Build Job'
+    pool:
+      name: 'default'
+    steps:
+    - task: Docker@2
+      displayName: 'Build & Push: Cart Service'
+      inputs:
+        containerRegistry: 'Dockerhub'
+        repository: 'monova21/cart'
+        command: 'buildAndPush'
+        Dockerfile: '**/backend/cartService/dockerfile'
+        tags: '$(tag)'
+
+    - task: Docker@2
+      displayName: 'Build & Push: Order Service'
+      inputs:
+        containerRegistry: 'Dockerhub'
+        repository: 'monova21/order'
+        command: 'buildAndPush'
+        Dockerfile: '**/backend/orderService/dockerfile'
+        tags: '$(tag)'
+
+    - task: Docker@2
+      displayName: 'Build & Push: Product Service'
+      inputs:
+        containerRegistry: 'Dockerhub'
+        repository: 'monova21/product'
+        command: 'buildAndPush'
+        Dockerfile: '**/backend/productService/dockerfile'
+        tags: '$(tag)'
+
+    - task: Docker@2
+      displayName: 'Build & Push: User Service'
+      inputs:
+        containerRegistry: 'Dockerhub'
+        repository: 'monova21/user'
+        command: 'buildAndPush'
+        Dockerfile: '**/backend/userService/dockerfile'
+        tags: '$(tag)'
+
+    - task: Docker@2
+      displayName: 'Build & Push: Frontend'
+      inputs:
+        containerRegistry: 'Dockerhub'
+        repository: 'monova21/frontend'
+        command: 'buildAndPush'
+        Dockerfile: '**/frontend/dockerfile'
+        tags: '$(tag)'
