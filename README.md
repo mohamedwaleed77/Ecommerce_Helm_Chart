@@ -4,50 +4,81 @@
 ## ▶ Watch this video:
 [![Watch the video](https://img.youtube.com/vi/yr_rd2v4taw/maxresdefault.jpg)](https://www.youtube.com/watch?v=yr_rd2v4taw)
 
-## 🚀 Features
+## 🏗️ System Architecture & DevOps Infrastructure
 
-### 🌟 Supports Arabic | English Languages
-- Using I18next library to translate 
-- State of language is passed to all components using redux
+### 🤏 Microservices Architecture *(YES, I still couldn't find a better emoji)*
+- **Decoupled Services:** Isolated backend services (**User**, **Product**, **Cart**, and **Order**) alongside a React frontend, each containerized using Docker.
+- **Self-Healing & Resilience:** Managed by Kubernetes to automatically restart failed containers and maintain desired state.
+- **Startup Dependency Management:** Implemented **Init Containers** across microservices to verify database availability (via FQDN health checks) before startup, eliminating race conditions.
+
+### ☸️ Kubernetes Orchestration & Helm
+- **Cluster Provisioning:** Bootstrapped a multi-node Kubernetes cluster on AWS EC2 from scratch using `kubeadm`.
+- **Modular Helm Charts:** Migrated raw YAML manifests into parameterized, reusable **Helm charts** for streamlined environment deployments.
+- **Stateful Persistence:** Deployed **MongoDB** using Kubernetes **StatefulSets** and `volumeClaimTemplates` to ensure stable network identities and prevent data corruption.
+- **Traffic Routing:** Configured **Nginx Ingress Controller** to route external HTTP traffic cleanly across frontend and backend microservices.
+- **Serverless Trade-off Evaluation:** Implemented and tested **Knative Serving** (Kourier Ingress & Queue Proxy) for scale-to-zero capabilities in staging, later transitioning to standard Kubernetes Deployments in cloud production to eliminate cold-start latency and reduce control-plane overhead.
+
+### ☁️ AWS Cloud Infrastructure & Security
+- **Network Isolation:** Architected a custom **AWS VPC** isolating worker nodes inside **Private Subnets**, utilizing a **NAT Gateway** and custom Route Tables for secure outbound internet access (pulling container images/updates).
+- **Zero-Bastion Access:** Secured node administration using **AWS Systems Manager (SSM)** and scoped **IAM Roles**, eliminating the need to expose SSH (port 22) to the public internet.
+- **Load Balancing:** Exposed the cluster securely via an **AWS Application Load Balancer (ALB)** forwarding traffic directly to the Nginx Ingress NodePort.
+- **Dynamic Cloud Storage:** Engineered persistent storage using **AWS EFS**, the **EFS CSI Driver**, and custom `StorageClasses` with isolated directory permissions and secured VPC NFS traffic.
+
+### 🔄 Automated CI/CD Pipeline
+- **Azure DevOps Integration:** Built automated CI pipelines triggered on Git commits to build, tag, and push multi-service Docker images directly to **Docker Hub**.
+
+---
+
+## ✨ Application Features (Full-Stack)
+
+### 🌟 Bilingual Support (Arabic | English)
+- Full internationalization powered by `i18next`.
+- Global language state managed and synced across all components via **Redux**.
 
 ### ✅ User Authentication & Authorization
-- JWT-based user authentication.
-- Role-based access for Admin and regular users.
-- Profile view and update for authenticated users.
-- Middle-wares to check authorization and tokens status.
-- If user's Role is not admin configuration paths will render 404
-- If user was able to reach the admin configuration paths somehow he can't really do anything there.
+- Stateless **JWT-based** authentication with email confirmation flow.
+- Role-Based Access Control (**RBAC**) distinguishing between Admin and regular users.
+- Protected routes & authorization middlewares: unauthorized access to admin paths renders a `404` page, backed by strict server-side role verification.
+- Authenticated user profile viewing and updating.
 
 ### 🛒 Product Catalog
-- Browse products with images,descriptions, prices.
-- Filter products by category, and price.
-- Stock availability and user reviews.
-- Pagination exists in this project but as Admin may want to see everything it's not use properly.
+- Browse products with images, descriptions, and pricing.
+- Filter catalog by category and price range.
+- Real-time stock availability tracking and user reviews.
+- Pagination implemented (intentionally bypassed in views where Admins require full inventory visibility).
 
 ### 🧺 Shopping Cart
-- Add, remove, or update quantities of items in the cart.
-- Cart summary with total price calculation.
-- Cart brought from the database using the token to show only user's cart.
+- Add, remove, and update item quantities dynamically.
+- Real-time cart summary and total price calculation.
+- User-specific cart persistence fetched securely from the database via JWT.
 
 ### 📦 Order Management
-- Checkout process with shipping information and payment method selection.
-- Order summary showing products, quantities, and total price.
-- Payment integration (interface only) with Stripe .
-- Logged-in users can view their past orders.
+- End-to-end checkout workflow with shipping details and payment method selection.
+- Detailed order summaries (items, quantities, total cost) and order history for logged-in users.
+- **Stripe** payment interface integration.
 
 ### 🛠️ Admin Dashboard
-- Admins can add, edit, and delete products.
-- Track product stock and manage inventory.
-- Manage user accounts (e.g., delete users).
+- Full CRUD operations for managing products (add, edit, delete).
+- Inventory and stock level tracking.
+- User account management.
 
 ### 📱 Responsive Design
-- Mobile-friendly interface using Tailwind
+- Mobile-first, responsive UI styled with **Tailwind CSS**.
 
-### 🔐 Security and Best Practices
-- Secure JWT authentication.
-- Passwords encrypted with bcrypt.
-- CSRF protection via headers and tokens.
+### 🔐 Application Security
+- Password hashing using **bcrypt**.
+- **CSRF protection** enforced via custom headers and tokens.
+- Secure JWT validation middlewares.
 
-### 🤏 Microservices Architecture (YES I couldn't find better emoji)
-- Each service is Isolated in a docker container.
-- If a service failed it will be restarted.
+---
+
+## 🧰 Tech Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend** | React, Redux, Tailwind CSS, i18next |
+| **Backend** | Node.js, Express, REST APIs, JWT, bcrypt |
+| **Database** | MongoDB (StatefulSet) |
+| **Containers & Orchestration** | Docker, Kubernetes (`kubeadm`), Helm, Nginx Ingress, Knative (Evaluated) |
+| **Cloud (AWS)** | EC2, VPC, Subnets, NAT Gateway, ALB, EFS (CSI Driver), IAM, SSM |
+| **CI/CD** | Azure DevOps, Docker Hub, GitHub |
